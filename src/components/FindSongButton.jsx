@@ -17,6 +17,14 @@ const SERVICES = {
   },
 };
 
+function openLink(url) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  a.click();
+}
+
 export default function FindSongButton({ title }) {
   const [service, setService] = useLocalStorage('static:music-service', null);
   const [showPicker, setShowPicker] = useState(false);
@@ -28,13 +36,13 @@ export default function FindSongButton({ title }) {
       setShowPicker(true);
       return;
     }
-    window.open(SERVICES[service].searchUrl(title), '_blank', 'noopener');
+    openLink(SERVICES[service].searchUrl(title));
   };
 
   const handlePick = (key) => {
     setService(key);
     setShowPicker(false);
-    window.open(SERVICES[key].searchUrl(title), '_blank', 'noopener');
+    openLink(SERVICES[key].searchUrl(title));
   };
 
   return (
