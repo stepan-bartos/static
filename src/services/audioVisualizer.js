@@ -4,9 +4,16 @@ class AudioVisualizer {
   }
 
   connect(audioElement) {
-    if (this.audioContext) return;
+    if (this.audioContext) {
+      // Resume if suspended (mobile browsers start AudioContext in suspended state)
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume().catch(() => {});
+      }
+      return;
+    }
     try {
       this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      this.audioContext.resume().catch(() => {});
     } catch {
       // Web Audio not available — visualizer will use simulated modes
     }

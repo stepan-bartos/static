@@ -170,23 +170,25 @@ export default function App() {
   }, []);
 
   const handleScan = useCallback(async (genre) => {
-    initAudioContext();
     dispatch({ type: 'SCAN_START' });
     try {
       const station = await getRandomStation(genre);
       dispatch({ type: 'SCAN_SUCCESS', station, genre });
       const url = station.url_resolved || station.url;
-      audioPlayer.play(url).catch(() => {});
+      audioPlayer.play(url).then(() => {
+        initAudioContext(); // After playback starts — avoids iOS audio session conflicts
+      }).catch(() => {});
     } catch (err) {
       dispatch({ type: 'SCAN_ERROR', error: err.message });
     }
   }, [initAudioContext]);
 
   const handlePlayFavorite = useCallback((station, genre) => {
-    initAudioContext();
     dispatch({ type: 'PLAY_STATION', station, genre });
     const url = station.url_resolved || station.url;
-    audioPlayer.play(url).catch(() => {});
+    audioPlayer.play(url).then(() => {
+      initAudioContext();
+    }).catch(() => {});
   }, [initAudioContext]);
 
   return (

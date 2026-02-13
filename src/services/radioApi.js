@@ -54,22 +54,37 @@ async function searchStationsByTags(tags, limit = 100) {
   return merged;
 }
 
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
 export async function getRandomStation(genre) {
   const stations = await searchStationsByTags(genre.tags, 100);
   if (stations.length === 0) {
     throw new Error(`No stations found for ${genre.label}`);
   }
 
+  // On mobile: prefer HTTPS streams and codecs Safari/Chrome can decode
+  let pool = stations;
+  if (isMobile) {
+    const compatible = stations.filter((s) => {
+      const url = s.url_resolved || s.url || '';
+      const isHttps = url.startsWith('https://');
+      // iOS Safari cannot decode Ogg Vorbis
+      const hasCompatibleCodec = !(/ogg|vorbis/i.test(s.codec || ''));
+      return isHttps && hasCompatibleCodec;
+    });
+    if (compatible.length > 0) pool = compatible;
+  }
+
   // Sort by bitrate descending (prefer higher quality), then by votes
-  const sorted = stations.sort((a, b) => {
+  const sorted = pool.sort((a, b) => {
     const bitDiff = (b.bitrate || 0) - (a.bitrate || 0);
     if (bitDiff !== 0) return bitDiff;
     return (b.votes || 0) - (a.votes || 0);
   });
 
   // Pick randomly from top 30 (balances quality with variety)
-  const poolSize = Math.min(30, sorted.length);
-  const pool = sorted.slice(0, poolSize);
-  const index = Math.floor(Math.random() * pool.length);
-  return pool[index];
+  const topN = Math.min(30, sorted.length);
+  const candidates = sorted.slice(0, topN);
+  const index = Math.floor(Math.random() * candidates.length);
+  return candidates[index];
 }
