@@ -1,0 +1,58 @@
+.visualizer {
+  grid-area: visualizer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 180px;
+}
+
+/* ===== Rings ===== */
+
+.vis-rings {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vis-ring {
+  position: absolute;
+  width: var(--ring-size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid var(--amber);
+  will-change: transform, opacity;
+  opacity: calc(0.08 + var(--intensity) * 0.72);
+  transform: scale(calc(1 + var(--intensity) * 0.08));
+  box-shadow:
+    0 0 12px rgba(255, 176, 0, 0.15),
+    inset 0 0 8px rgba(255, 176, 0, 0.05);
+  pointer-events: none;
+}
+
+.vis-ring--0 { border-width: 2px; }
+.vis-ring--1 { border-width: 1.5px; }
+.vis-ring--2 { border-width: 1.5px; }
+.vis-ring--3 { border-width: 1px; }
+.vis-ring--4 { border-width: 1px; border-color: var(--amber-dark); }
+
+.vis-center-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow:
+    0 0 8px var(--amber-glow-strong),
+    0 0 24px var(--amber-glow-soft);
+  z-index: 1;
+}
+
+@media (max-height: 550px) {
+  .visualizer {
+    min-height: 100px;
+  }
+}

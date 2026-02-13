@@ -1,0 +1,200 @@
+.station-display {
+  grid-area: station;
+  padding: 8px 24px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+  text-align: center;
+}
+
+.station-display--empty {
+  color: var(--text-dim);
+  font-size: 13px;
+  padding: 16px 24px;
+}
+
+.sd-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.sd-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sd-dot--on {
+  background: var(--amber);
+  box-shadow: 0 0 6px var(--amber-glow-strong), 0 0 14px var(--amber-glow-soft);
+  animation: dot-glow 2s ease-in-out infinite;
+}
+
+.sd-dot--loading {
+  background: var(--amber-dim);
+  animation: scan-pulse 1.2s ease-in-out infinite;
+}
+
+.sd-dot--error {
+  background: #ff4444;
+  box-shadow: 0 0 6px rgba(255, 68, 68, 0.6);
+}
+
+.sd-genre {
+  color: var(--text-dim);
+  margin-left: 8px;
+}
+
+.sd-error {
+  color: #ff6b6b;
+  font-size: 12px;
+  padding: 6px 0;
+}
+
+.sd-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.sd-favicon {
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  object-fit: contain;
+  filter: grayscale(1) sepia(1) saturate(3) hue-rotate(5deg) brightness(0.9);
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+/* Marquee container — clips overflow, single line */
+
+.sd-marquee {
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+  mask-image: linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent);
+}
+
+.sd-name {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--amber);
+  text-shadow: var(--glow-md);
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.sd-name--scrolling {
+  display: inline-flex;
+  animation: marquee-scroll linear infinite;
+}
+
+.sd-fav {
+  font-size: 24px;
+  color: var(--text-dim);
+  transition: all var(--transition);
+  flex-shrink: 0;
+  padding: 2px;
+  line-height: 1;
+}
+
+.sd-fav:hover:not(:disabled) {
+  color: var(--amber);
+  text-shadow: var(--glow-sm);
+}
+
+.sd-fav--active {
+  color: var(--amber);
+  text-shadow: var(--glow-md);
+}
+
+.sd-fav:disabled:not(.sd-fav--active) {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.sd-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.sd-quality {
+  color: var(--amber-dark);
+}
+
+/* Now Playing — inline with station name */
+
+.sd-name-sep {
+  color: var(--amber-dark);
+  font-weight: 300;
+}
+
+.sd-name-track {
+  font-weight: 400;
+  color: var(--amber-dim);
+  font-size: 0.85em;
+}
+
+/* Track History */
+
+.sd-history {
+  padding-top: 4px;
+  font-size: 10px;
+  color: var(--text-dim);
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sd-history-label {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-right: 8px;
+  opacity: 0.5;
+}
+
+.sd-history-sep {
+  color: var(--amber-dark);
+  opacity: 0.4;
+}
+
+@keyframes dot-glow {
+  0%, 100% {
+    box-shadow: 0 0 6px var(--amber-glow-strong), 0 0 14px var(--amber-glow-soft);
+  }
+  50% {
+    box-shadow: 0 0 8px var(--amber-glow-strong), 0 0 20px var(--amber-glow-med);
+  }
+}
+
+.sd-name-copy {
+  padding-right: 80px;
+  flex-shrink: 0;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

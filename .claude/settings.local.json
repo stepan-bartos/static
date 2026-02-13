@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:de1.api.radio-browser.info)",
+      "Bash(curl:*)",
+      "WebFetch(domain:www.radio-browser.info)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:all.api.radio-browser.info)",
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(npx vite:*)",
+      "Bash(python3:*)",
+      "Bash(npx wrangler whoami:*)",
+      "Bash(npx wrangler login:*)",
+      "Bash(pkill:*)",
+      "Bash(gh auth status:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit — Static v2\n\nInternet radio receiver with genre scanning, visualizer rings, now-playing metadata, track history, favorites, and session persistence.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}

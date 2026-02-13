@@ -1,0 +1,81 @@
+.favorites-bar {
+  grid-area: favorites;
+  padding: 8px 24px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.fb-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.fb-dot {
+  color: var(--amber-dark);
+  padding: 0 10px;
+  font-size: 14px;
+  user-select: none;
+}
+
+.fb-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim, #666);
+  letter-spacing: 0.5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 0;
+  white-space: nowrap;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.fb-name:hover {
+  color: var(--amber);
+  text-shadow: 0 0 4px rgba(255, 176, 0, 0.4);
+}
+
+.fb-name--active {
+  color: var(--amber);
+  text-shadow: 0 0 4px rgba(255, 176, 0, 0.4);
+}
+
+.fb-remove {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim, #666);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 2px;
+  margin-left: 2px;
+  opacity: 0;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  line-height: 1;
+}
+
+.fb-item:hover .fb-remove {
+  opacity: 0.5;
+}
+
+.fb-remove:hover {
+  opacity: 1 !important;
+  color: #ff6b6b;
+}
+
+@media (max-width: 600px) {
+  .fb-name {
+    font-size: 10px;
+    max-width: 110px;
+  }
+
+  .fb-dot {
+    padding: 0 6px;
+  }
+}

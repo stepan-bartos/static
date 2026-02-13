@@ -1,0 +1,28 @@
+.scan-button {
+  display: block;
+  margin: 8px auto 0;
+  padding: 8px 44px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--amber);
+  border: 1px solid var(--amber-dark);
+  border-radius: 20px;
+  transition: all var(--transition);
+}
+
+.scan-button:hover:not(:disabled) {
+  border-color: var(--amber);
+  text-shadow: var(--glow-md);
+  box-shadow: 0 0 16px rgba(255, 176, 0, 0.12);
+}
+
+.scan-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.scan-button--scanning {
+  animation: scan-pulse 1.2s ease-in-out infinite;
+}

@@ -1,0 +1,64 @@
+:root {
+  --amber: #FFB000;
+  --amber-dim: #CC8D00;
+  --amber-dark: #7A5500;
+  --amber-glow-soft: rgba(255, 176, 0, 0.3);
+  --amber-glow-med: rgba(255, 176, 0, 0.4);
+  --amber-glow-strong: rgba(255, 176, 0, 0.6);
+  --bg: #0a0a0a;
+  --bg-elevated: #141414;
+  --bg-surface: #1a1a1a;
+  --text-primary: #FFB000;
+  --text-secondary: #CC8D00;
+  --text-dim: #7A5500;
+  --font-mono: 'IBM Plex Mono', 'Fira Mono', 'Courier New', monospace;
+  --glow-sm: 0 0 4px rgba(255, 176, 0, 0.3);
+  --glow-md: 0 0 8px rgba(255, 176, 0, 0.4), 0 0 16px rgba(255, 176, 0, 0.2);
+  --glow-lg: 0 0 8px rgba(255, 176, 0, 0.5), 0 0 20px rgba(255, 176, 0, 0.3), 0 0 40px rgba(255, 176, 0, 0.1);
+  --radius: 4px;
+  --transition: 0.2s ease;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100vh;
+  height: 100dvh; /* override for mobile browsers that support it */
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font-family: var(--font-mono);
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+}
+
+button:focus-visible {
+  outline: 1px solid var(--amber);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: rgba(255, 176, 0, 0.3);
+  color: var(--amber);
+}
