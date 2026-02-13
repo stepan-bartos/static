@@ -56,24 +56,35 @@ async function searchStationsByTags(tags, limit = 100) {
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-export async function getRandomStation(genre) {
+export async function getRandomStation(genre, excludeId = null) {
   const stations = await searchStationsByTags(genre.tags, 100);
   if (stations.length === 0) {
     throw new Error(`No stations found for ${genre.label}`);
   }
 
-  // On mobile: prefer HTTPS streams and codecs Safari/Chrome can decode
-  let pool = stations;
-  if (isMobile) {
-    const compatible = stations.filter((s) => {
+  // Filter: HTTPS only (HTTP blocked as mixed content), no Russian stations,
+  // exclude currently playing station, mobile codec check
+  let pool = stations.filter((s) => {
+    const url = s.url_resolved || s.url || '';
+    if (!url.startsWith('https://')) return false;
+    if ((s.countrycode || '').toUpperCase() === 'RU') return false;
+    if (excludeId && s.stationuuid === excludeId) return false;
+    if (isMobile && /ogg|vorbis/i.test(s.codec || '')) return false;
+    return true;
+  });
+
+  // Fallback: HTTPS + no RU (drop excludeId and codec filter)
+  if (pool.length === 0) {
+    pool = stations.filter((s) => {
       const url = s.url_resolved || s.url || '';
-      const isHttps = url.startsWith('https://');
-      // iOS Safari cannot decode Ogg Vorbis
-      const hasCompatibleCodec = !(/ogg|vorbis/i.test(s.codec || ''));
-      return isHttps && hasCompatibleCodec;
+      return url.startsWith('https://') && (s.countrycode || '').toUpperCase() !== 'RU';
     });
-    if (compatible.length > 0) pool = compatible;
   }
+  // Last resort: anything non-RU
+  if (pool.length === 0) {
+    pool = stations.filter((s) => (s.countrycode || '').toUpperCase() !== 'RU');
+  }
+  if (pool.length === 0) pool = stations;
 
   // Sort by bitrate descending (prefer higher quality), then by votes
   const sorted = pool.sort((a, b) => {

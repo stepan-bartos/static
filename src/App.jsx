@@ -79,6 +79,7 @@ export default function App() {
   const favorites = useFavorites();
   const [savedSession, setSavedSession] = useLocalStorage('static:session', null);
   const audioContextInit = useRef(false);
+  const gestureCleanup = useRef(null); // clears autoplay-resume listeners
 
   // Keep viewport size in sync (fixes Safari not recalculating on resize / monitor drag)
   useEffect(() => {
@@ -110,19 +111,21 @@ export default function App() {
     audioPlayer.play(url).catch((err) => {
       if (err.name === 'NotAllowedError') {
         // Autoplay blocked — resume on first user interaction
-        const resume = () => {
-          initAudioContext();
-          audioPlayer.play(url).catch(() => {});
-          cleanup();
-        };
         const cleanup = () => {
           document.removeEventListener('click', resume);
           document.removeEventListener('touchstart', resume);
           document.removeEventListener('keydown', resume);
+          gestureCleanup.current = null;
         };
-        document.addEventListener('click', resume, { once: true });
-        document.addEventListener('touchstart', resume, { once: true });
-        document.addEventListener('keydown', resume, { once: true });
+        const resume = () => {
+          cleanup();
+          initAudioContext();
+          audioPlayer.play(url).catch(() => {});
+        };
+        gestureCleanup.current = cleanup;
+        document.addEventListener('click', resume);
+        document.addEventListener('touchstart', resume);
+        document.addEventListener('keydown', resume);
       }
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -170,9 +173,10 @@ export default function App() {
   }, []);
 
   const handleScan = useCallback(async (genre) => {
+    gestureCleanup.current?.(); // clear autoplay-resume listeners
     dispatch({ type: 'SCAN_START' });
     try {
-      const station = await getRandomStation(genre);
+      const station = await getRandomStation(genre, state.currentStation?.stationuuid);
       dispatch({ type: 'SCAN_SUCCESS', station, genre });
       const url = station.url_resolved || station.url;
       audioPlayer.play(url).then(() => {
@@ -184,6 +188,7 @@ export default function App() {
   }, [initAudioContext]);
 
   const handlePlayFavorite = useCallback((station, genre) => {
+    gestureCleanup.current?.(); // clear autoplay-resume listeners
     dispatch({ type: 'PLAY_STATION', station, genre });
     const url = station.url_resolved || station.url;
     audioPlayer.play(url).then(() => {

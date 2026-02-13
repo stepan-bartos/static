@@ -69,6 +69,10 @@
   color: #ff6b6b;
 }
 
+.favorites-bar--empty {
+  min-height: 36px;
+}
+
 @media (max-width: 600px) {
   .fb-name {
     font-size: 10px;

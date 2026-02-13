@@ -2,7 +2,9 @@ import { GENRES } from '../data/genres.js';
 import './FavoritesBar.css';
 
 export default function FavoritesBar({ favorites, onPlay, onRemove, currentStationId }) {
-  if (favorites.length === 0) return null;
+  if (favorites.length === 0) {
+    return <div className="favorites-bar favorites-bar--empty" />;
+  }
 
   const handlePlay = (station) => {
     const genre = GENRES.find((g) => g.key === station.genreKey) || {
