@@ -21,6 +21,24 @@
   align-items: center;
   justify-content: center;
   padding: 0 24px;
+  position: relative;
+}
+
+.app-logo {
+  position: absolute;
+  left: 24px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--amber-dark);
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.app-logo:hover {
+  color: var(--amber);
+  text-shadow: 0 0 4px rgba(255, 176, 0, 0.3);
 }
 
 .app-title {

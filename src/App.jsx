@@ -201,6 +201,7 @@ export default function App() {
       <CRTOverlay />
 
       <header className="app-header">
+        <a href="https://13am.app" className="app-logo">13AM</a>
         <div className="app-title">Static</div>
       </header>
 
