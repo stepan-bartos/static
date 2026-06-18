@@ -60,16 +60,39 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
+  position: relative;
 }
 
 .controls-row .scan-button {
   margin: 8px 0 0;
 }
 
-.controls-row--secondary {
-  gap: 24px;
-  margin-top: 10px;
-  flex-wrap: wrap;
+/* Volume + sleep anchored bottom-right, on the same line as Scan */
+.controls-aux {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* On narrow screens, drop the aux controls below and center them */
+@media (max-width: 720px) {
+  .controls-aux {
+    position: static;
+    transform: none;
+    margin-top: 10px;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .controls-row {
+    flex-wrap: wrap;
+  }
 }
 
 @keyframes scan-pulse {

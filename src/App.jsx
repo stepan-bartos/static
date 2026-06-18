@@ -564,20 +564,20 @@ export default function App() {
             onScan={() => state.selectedGenre && handleScan(state.selectedGenre)}
             disabled={!state.selectedGenre}
           />
-        </div>
-        <div className="controls-row controls-row--secondary">
-          <VolumeControl
-            volume={volume}
-            muted={volume === 0}
-            onVolumeChange={handleVolumeChange}
-            onToggleMute={handleToggleMute}
-          />
-          <SleepTimer
-            active={sleepDeadline != null}
-            remaining={sleepRemaining}
-            onSet={handleSetSleep}
-            onCancel={handleCancelSleep}
-          />
+          <div className="controls-aux">
+            <VolumeControl
+              volume={volume}
+              muted={volume === 0}
+              onVolumeChange={handleVolumeChange}
+              onToggleMute={handleToggleMute}
+            />
+            <SleepTimer
+              active={sleepDeadline != null}
+              remaining={sleepRemaining}
+              onSet={handleSetSleep}
+              onCancel={handleCancelSleep}
+            />
+          </div>
         </div>
       </div>
 
