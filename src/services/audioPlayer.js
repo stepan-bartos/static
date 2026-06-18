@@ -92,7 +92,11 @@ class AudioPlayer {
   }
 
   setVolume(level) {
-    this.audio.volume = level;
+    this.audio.volume = Math.max(0, Math.min(1, level));
+  }
+
+  getVolume() {
+    return this.audio.volume;
   }
 }
 

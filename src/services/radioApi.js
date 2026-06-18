@@ -57,6 +57,12 @@ async function searchStationsByTags(tags, limit = 100) {
   return merged;
 }
 
+// Fetch a single station by its UUID (used for shared deep-links).
+export async function searchStationByUuid(uuid) {
+  const stations = await apiFetch('/json/stations/byuuid', { uuids: uuid });
+  return Array.isArray(stations) && stations.length > 0 ? stations[0] : null;
+}
+
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 export async function getRandomStation(genre, excludeId = null) {

@@ -1,0 +1,24 @@
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--amber);
+  border: 1px solid var(--amber-dark);
+  border-radius: 50%;
+  transition: all var(--transition);
+}
+
+.back-button:hover:not(:disabled) {
+  border-color: var(--amber);
+  text-shadow: var(--glow-md);
+  box-shadow: 0 0 16px rgba(255, 176, 0, 0.12);
+}
+
+.back-button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}

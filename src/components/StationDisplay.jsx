@@ -12,6 +12,8 @@ export default function StationDisplay({
   nowPlaying,
   trackHistory,
   onTogglePause,
+  onShare,
+  shareCopied,
 }) {
   const marqueeRef = useRef(null);
   const textRef = useRef(null);
@@ -166,6 +168,14 @@ export default function StationDisplay({
               <span className="sd-quality">{qualityLabel}</span>
             )}
             {nowPlaying && <FindSongButton title={nowPlaying} />}
+            <button
+              className="sd-share"
+              onClick={onShare}
+              title="Share station"
+              aria-label="Share station"
+            >
+              {shareCopied ? 'Copied!' : '↗ Share'}
+            </button>
           </div>
 
           {trackHistory && trackHistory.length > 0 && (
