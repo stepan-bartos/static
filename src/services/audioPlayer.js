@@ -59,6 +59,31 @@ class AudioPlayer {
     });
   }
 
+  pause() {
+    clearTimeout(this._stallTimer);
+    this.audio.pause();
+    this.onStateChange?.('paused');
+  }
+
+  resume() {
+    if (!this._currentUrl) return;
+    this.onStateChange?.('loading');
+    // For live streams, re-set src to jump to live edge (not stale buffer)
+    this.audio.src = this._currentUrl;
+    this.audio.load();
+    this._stallTimer = setTimeout(() => {
+      if (this.audio.paused || this.audio.readyState < 3) {
+        this.onStateChange?.('error');
+      }
+    }, 12000);
+    this.audio.play().then(() => {
+      clearTimeout(this._stallTimer);
+    }).catch(() => {
+      clearTimeout(this._stallTimer);
+      this.onStateChange?.('error');
+    });
+  }
+
   stop() {
     clearTimeout(this._stallTimer);
     this.audio.pause();

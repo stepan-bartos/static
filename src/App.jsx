@@ -80,6 +80,7 @@ export default function App() {
   const [savedSession, setSavedSession] = useLocalStorage('static:session', null);
   const audioContextInit = useRef(false);
   const gestureCleanup = useRef(null); // clears autoplay-resume listeners
+  const currentStationRef = useRef(null);
 
   // Keep viewport size in sync (fixes Safari not recalculating on resize / monitor drag)
   useEffect(() => {
@@ -130,6 +131,11 @@ export default function App() {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Keep ref in sync so handleScan always sees current station
+  useEffect(() => {
+    currentStationRef.current = state.currentStation;
+  }, [state.currentStation]);
+
   // Save session when station changes
   useEffect(() => {
     if (state.currentStation && state.selectedGenre) {
@@ -176,7 +182,7 @@ export default function App() {
     gestureCleanup.current?.(); // clear autoplay-resume listeners
     dispatch({ type: 'SCAN_START' });
     try {
-      const station = await getRandomStation(genre, state.currentStation?.stationuuid);
+      const station = await getRandomStation(genre, currentStationRef.current?.stationuuid);
       dispatch({ type: 'SCAN_SUCCESS', station, genre });
       const url = station.url_resolved || station.url;
       audioPlayer.play(url).then(() => {
@@ -186,6 +192,14 @@ export default function App() {
       dispatch({ type: 'SCAN_ERROR', error: err.message });
     }
   }, [initAudioContext]);
+
+  const handleTogglePause = useCallback(() => {
+    if (state.audioState === 'playing') {
+      audioPlayer.pause();
+    } else if (state.audioState === 'paused') {
+      audioPlayer.resume();
+    }
+  }, [state.audioState]);
 
   const handlePlayFavorite = useCallback((station, genre) => {
     gestureCleanup.current?.(); // clear autoplay-resume listeners
@@ -219,6 +233,7 @@ export default function App() {
         favorites={favorites}
         nowPlaying={state.nowPlaying}
         trackHistory={state.trackHistory}
+        onTogglePause={handleTogglePause}
       />
 
       <div className="controls-area">

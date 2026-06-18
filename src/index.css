@@ -1,20 +1,20 @@
 :root {
-  --amber: #FFB000;
-  --amber-dim: #CC8D00;
-  --amber-dark: #7A5500;
-  --amber-glow-soft: rgba(255, 176, 0, 0.3);
-  --amber-glow-med: rgba(255, 176, 0, 0.4);
-  --amber-glow-strong: rgba(255, 176, 0, 0.6);
+  --amber: #FFC233;
+  --amber-dim: #E0A020;
+  --amber-dark: #A07018;
+  --amber-glow-soft: rgba(255, 194, 51, 0.35);
+  --amber-glow-med: rgba(255, 194, 51, 0.45);
+  --amber-glow-strong: rgba(255, 194, 51, 0.65);
   --bg: #0a0a0a;
   --bg-elevated: #141414;
   --bg-surface: #1a1a1a;
-  --text-primary: #FFB000;
-  --text-secondary: #CC8D00;
-  --text-dim: #7A5500;
+  --text-primary: #FFC233;
+  --text-secondary: #E0A020;
+  --text-dim: #A07018;
   --font-mono: 'IBM Plex Mono', 'Fira Mono', 'Courier New', monospace;
-  --glow-sm: 0 0 4px rgba(255, 176, 0, 0.3);
-  --glow-md: 0 0 8px rgba(255, 176, 0, 0.4), 0 0 16px rgba(255, 176, 0, 0.2);
-  --glow-lg: 0 0 8px rgba(255, 176, 0, 0.5), 0 0 20px rgba(255, 176, 0, 0.3), 0 0 40px rgba(255, 176, 0, 0.1);
+  --glow-sm: 0 0 5px rgba(255, 194, 51, 0.35);
+  --glow-md: 0 0 10px rgba(255, 194, 51, 0.45), 0 0 20px rgba(255, 194, 51, 0.25);
+  --glow-lg: 0 0 10px rgba(255, 194, 51, 0.55), 0 0 24px rgba(255, 194, 51, 0.35), 0 0 44px rgba(255, 194, 51, 0.15);
   --radius: 4px;
   --transition: 0.2s ease;
 }

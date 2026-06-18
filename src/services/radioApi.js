@@ -1,28 +1,31 @@
+// `all` is a round-robin DNS endpoint that load-balances across healthy
+// servers; the named mirrors are fallbacks in case it's unavailable.
 const API_MIRRORS = [
+  'https://all.api.radio-browser.info',
   'https://de1.api.radio-browser.info',
-  'https://fr1.api.radio-browser.info',
-  'https://nl1.api.radio-browser.info',
 ];
 
 let currentMirror = 0;
 
 async function apiFetch(path, params = {}) {
-  const url = new URL(path, API_MIRRORS[currentMirror]);
-  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
-
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return await response.json();
-  } catch (error) {
-    // Rotate to next mirror and retry once
-    currentMirror = (currentMirror + 1) % API_MIRRORS.length;
-    const retryUrl = new URL(path, API_MIRRORS[currentMirror]);
-    Object.entries(params).forEach(([k, v]) => retryUrl.searchParams.set(k, v));
-    const retryResponse = await fetch(retryUrl);
-    if (!retryResponse.ok) throw error;
-    return await retryResponse.json();
+  let lastError;
+  // Try each mirror in turn, starting from the last known-good one.
+  for (let i = 0; i < API_MIRRORS.length; i++) {
+    const mirror = API_MIRRORS[(currentMirror + i) % API_MIRRORS.length];
+    const url = new URL(path, mirror);
+    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      // Remember the mirror that worked for subsequent calls.
+      currentMirror = (currentMirror + i) % API_MIRRORS.length;
+      return data;
+    } catch (error) {
+      lastError = error;
+    }
   }
+  throw lastError;
 }
 
 async function searchStationsByTag(tag, limit = 100) {
@@ -86,16 +89,19 @@ export async function getRandomStation(genre, excludeId = null) {
   }
   if (pool.length === 0) pool = stations;
 
-  // Sort by bitrate descending (prefer higher quality), then by votes
-  const sorted = pool.sort((a, b) => {
-    const bitDiff = (b.bitrate || 0) - (a.bitrate || 0);
-    if (bitDiff !== 0) return bitDiff;
-    return (b.votes || 0) - (a.votes || 0);
-  });
+  // Effective bitrate accounting for codec efficiency
+  function effectiveBitrate(s) {
+    let br = s.bitrate || 0;
+    const codec = (s.codec || '').toUpperCase();
+    if (/AAC|AAC\+|HE-AAC|MP4A/.test(codec)) br = Math.round(br * 1.5);
+    if (/OGG|VORBIS|OPUS/.test(codec)) br = Math.round(br * 1.3);
+    return br;
+  }
 
-  // Pick randomly from top 30 (balances quality with variety)
-  const topN = Math.min(30, sorted.length);
-  const candidates = sorted.slice(0, topN);
-  const index = Math.floor(Math.random() * candidates.length);
-  return candidates[index];
+  // Filter out low-quality streams (below ~128kbps effective), keep the rest
+  const decent = pool.filter((s) => effectiveBitrate(s) >= 96 || s.bitrate === 0);
+  const candidates = decent.length > 0 ? decent : pool;
+
+  // Flat random pick — variety over quality
+  return candidates[Math.floor(Math.random() * candidates.length)];
 }

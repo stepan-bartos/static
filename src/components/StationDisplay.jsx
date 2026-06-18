@@ -11,6 +11,7 @@ export default function StationDisplay({
   favorites,
   nowPlaying,
   trackHistory,
+  onTogglePause,
 }) {
   const marqueeRef = useRef(null);
   const textRef = useRef(null);
@@ -48,11 +49,15 @@ export default function StationDisplay({
     ? 'Connecting...'
     : audioState === 'playing'
     ? 'On Air'
+    : audioState === 'paused'
+    ? 'Paused'
     : audioState === 'error'
     ? 'Signal Lost'
     : audioState === 'blocked'
     ? 'Tap to play'
     : '';
+
+  const canToggle = audioState === 'playing' || audioState === 'paused';
 
   const isFav = station ? favorites.isFavorite(station.stationuuid) : false;
 
@@ -72,11 +77,18 @@ export default function StationDisplay({
 
   return (
     <div className="station-display">
-      <div className="sd-status">
+      <div
+        className={`sd-status ${canToggle ? 'sd-status--clickable' : ''}`}
+        onClick={canToggle ? onTogglePause : undefined}
+        role={canToggle ? 'button' : undefined}
+        title={canToggle ? (audioState === 'playing' ? 'Pause' : 'Resume') : undefined}
+      >
         <span
           className={`sd-dot ${
             audioState === 'playing'
               ? 'sd-dot--on'
+              : audioState === 'paused'
+              ? 'sd-dot--paused'
               : audioState === 'error'
               ? 'sd-dot--error'
               : audioState === 'blocked'

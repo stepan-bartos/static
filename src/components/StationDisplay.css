@@ -45,9 +45,22 @@
   animation: scan-pulse 1.2s ease-in-out infinite;
 }
 
+.sd-dot--paused {
+  background: var(--amber-dark);
+}
+
 .sd-dot--error {
   background: #ff4444;
   box-shadow: 0 0 6px rgba(255, 68, 68, 0.6);
+}
+
+.sd-status--clickable {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.sd-status--clickable:hover {
+  color: var(--amber);
 }
 
 .sd-genre {
