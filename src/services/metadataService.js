@@ -5,47 +5,39 @@
 
 const PROXY_BASE =
   import.meta.env.VITE_METADATA_PROXY || 'https://static-metadata.stepan-barty-02b.workers.dev';
-const POLL_INTERVAL = 15_000; // 15 seconds
+const POLL_INTERVAL = 15_000;
 
-let _timer = null;
-let _streamUrl = null;
-let _callback = null;
-let _lastTitle = null;
+let timer = null;
+let generation = 0;
 
-async function _poll() {
-  if (!_streamUrl) return;
-  try {
-    const url = `${PROXY_BASE}/api/metadata?url=${encodeURIComponent(_streamUrl)}`;
-    const res = await fetch(url);
-    if (!res.ok) return;
-    const data = await res.json();
-    if (data.title && data.title !== _lastTitle) {
-      const previousTitle = _lastTitle;
-      _lastTitle = data.title;
-      _callback?.({ title: data.title, previousTitle });
-    }
-  } catch {
-    // Metadata is non-critical — swallow errors
-  }
-}
-
-function startPolling(streamUrl, callback) {
+export function startPolling(streamUrl, onTitle) {
   stopPolling();
-  _streamUrl = streamUrl;
-  _callback = callback;
-  _lastTitle = null;
-  _poll(); // fetch immediately
-  _timer = setInterval(_poll, POLL_INTERVAL);
+  const mine = generation;
+  let lastTitle = null;
+
+  const poll = async () => {
+    try {
+      const res = await fetch(`${PROXY_BASE}/api/metadata?url=${encodeURIComponent(streamUrl)}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      // A slow answer for a station we've already left must not leak into the next one
+      if (mine !== generation) return;
+      const title = typeof data.title === 'string' ? data.title.trim() : '';
+      if (title && title !== lastTitle) {
+        lastTitle = title;
+        onTitle(title);
+      }
+    } catch {
+      // Metadata is non-critical — swallow errors
+    }
+  };
+
+  poll();
+  timer = setInterval(poll, POLL_INTERVAL);
 }
 
-function stopPolling() {
-  if (_timer) {
-    clearInterval(_timer);
-    _timer = null;
-  }
-  _streamUrl = null;
-  _callback = null;
-  _lastTitle = null;
+export function stopPolling() {
+  generation += 1;
+  clearInterval(timer);
+  timer = null;
 }
-
-export default { startPolling, stopPolling };

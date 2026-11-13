@@ -2,21 +2,19 @@
   --amber: #FFC233;
   --amber-dim: #E0A020;
   --amber-dark: #A07018;
-  --amber-glow-soft: rgba(255, 194, 51, 0.35);
-  --amber-glow-med: rgba(255, 194, 51, 0.45);
-  --amber-glow-strong: rgba(255, 194, 51, 0.65);
+  --amber-rgb: 255, 194, 51;
+  --text-primary: var(--amber);
+  --text-secondary: var(--amber-dim);
+  --text-dim: #B5852B;
+  --line: rgba(var(--amber-rgb), 0.16);
+  --danger: #ff6b6b;
   --bg: #0a0a0a;
-  --bg-elevated: #141414;
-  --bg-surface: #1a1a1a;
-  --text-primary: #FFC233;
-  --text-secondary: #E0A020;
-  --text-dim: #A07018;
+  --bg-elevated: #11100e;
   --font-mono: 'IBM Plex Mono', 'Fira Mono', 'Courier New', monospace;
-  --glow-sm: 0 0 5px rgba(255, 194, 51, 0.35);
-  --glow-md: 0 0 10px rgba(255, 194, 51, 0.45), 0 0 20px rgba(255, 194, 51, 0.25);
-  --glow-lg: 0 0 10px rgba(255, 194, 51, 0.55), 0 0 24px rgba(255, 194, 51, 0.35), 0 0 44px rgba(255, 194, 51, 0.15);
-  --radius: 4px;
-  --transition: 0.2s ease;
+  --glow-sm: 0 0 5px rgba(var(--amber-rgb), 0.35);
+  --glow-md: 0 0 10px rgba(var(--amber-rgb), 0.45), 0 0 20px rgba(var(--amber-rgb), 0.25);
+  --glow-lg: 0 0 14px rgba(var(--amber-rgb), 0.6), 0 0 34px rgba(var(--amber-rgb), 0.3);
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 *,
@@ -28,8 +26,7 @@
 }
 
 html, body, #root {
-  height: 100vh;
-  height: 100dvh; /* override for mobile browsers that support it */
+  height: 100%;
   overflow: hidden;
 }
 
@@ -42,23 +39,51 @@ body {
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button {
-  font-family: var(--font-mono);
-  cursor: pointer;
-  border: none;
-  background: none;
+  font: inherit;
   color: inherit;
-  font-size: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-button:focus-visible {
-  outline: 1px solid var(--amber);
-  outline-offset: 2px;
+button:disabled {
+  cursor: default;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 ::selection {
-  background: rgba(255, 176, 0, 0.3);
+  background: rgba(var(--amber-rgb), 0.3);
   color: var(--amber);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

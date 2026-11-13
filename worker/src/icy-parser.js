@@ -43,10 +43,6 @@ export async function getIcyMetadata(streamUrl) {
 
     // We may need to read past multiple metadata blocks if the first is empty
     for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-      const blockStart = attempt * (metaint + 1) + attempt > 0
-        ? buffer.length // continue from where we are
-        : 0;
-
       // Target: need (attempt+1) * metaint bytes of audio + metadata blocks
       const needed = (attempt + 1) * metaint + (attempt + 1); // +1 for each length byte
 
