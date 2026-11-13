@@ -1,33 +1,32 @@
-import { useLocalStorage } from './useLocalStorage.js';
 import { useCallback, useEffect } from 'react';
+import { useLocalStorage } from './useLocalStorage.js';
+import { slimStation } from '../services/stationPicker.js';
 
-const MAX_FAVORITES = 5;
+export const MAX_FAVORITES = 10;
 const COOKIE_KEY = 'static_favorites';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
+const COOKIE_BUDGET = 3800; // browsers cap a cookie at ~4 KB
 
-/** Keep only the fields we need — keeps storage small and cookie-safe. */
-function slimStation(station, genre) {
-  return {
-    stationuuid: station.stationuuid,
-    name: station.name,
-    url: station.url,
-    url_resolved: station.url_resolved,
-    favicon: station.favicon || '',
-    country: station.country || '',
-    countrycode: station.countrycode || '',
-    codec: station.codec || '',
-    bitrate: station.bitrate || 0,
-    genreKey: genre?.key ?? station.genreKey,
-    genreLabel: genre?.label ?? station.genreLabel,
-  };
-}
-
+/**
+ * A cookie copy of the favorites survives Safari's 7-day localStorage
+ * eviction. Only the essentials go in, and the list is trimmed to fit.
+ */
 function writeCookie(favorites) {
   try {
-    const json = JSON.stringify(favorites);
-    document.cookie = `${COOKIE_KEY}=${encodeURIComponent(json)};path=/;max-age=${COOKIE_MAX_AGE};SameSite=Lax`;
+    let items = favorites.map((f) => ({
+      stationuuid: f.stationuuid,
+      name: f.name,
+      url: f.url_resolved || f.url,
+      genreKey: f.genreKey,
+    }));
+    let encoded = encodeURIComponent(JSON.stringify(items));
+    while (encoded.length > COOKIE_BUDGET && items.length > 0) {
+      items = items.slice(0, -1);
+      encoded = encodeURIComponent(JSON.stringify(items));
+    }
+    document.cookie = `${COOKIE_KEY}=${encoded};path=/;max-age=${COOKIE_MAX_AGE};SameSite=Lax`;
   } catch {
-    // cookie write failed (size, disabled, etc.)
+    // cookie write failed (disabled, etc.)
   }
 }
 
@@ -35,28 +34,25 @@ function readCookie() {
   try {
     const match = document.cookie.match(new RegExp(`(?:^|; )${COOKIE_KEY}=([^;]*)`));
     if (!match) return null;
-    return JSON.parse(decodeURIComponent(match[1]));
+    const items = JSON.parse(decodeURIComponent(match[1]));
+    return Array.isArray(items) ? items : null;
   } catch {
     return null;
   }
 }
 
 export function useFavorites() {
-  const [favorites, setFavorites] = useLocalStorage('static:favorites', () => {
-    // If localStorage was empty (Safari eviction), restore from cookie
-    return readCookie() || [];
-  });
+  const [favorites, setFavorites] = useLocalStorage('static:favorites', () => readCookie() || []);
 
-  // Mirror every change to a cookie (survives Safari 7-day localStorage eviction)
   useEffect(() => {
     writeCookie(favorites);
   }, [favorites]);
 
-  const addFavorite = useCallback((station, genre) => {
+  const addFavorite = useCallback((station, genreKey) => {
     setFavorites((prev) => {
       if (prev.length >= MAX_FAVORITES) return prev;
       if (prev.some((f) => f.stationuuid === station.stationuuid)) return prev;
-      return [...prev, slimStation(station, genre)];
+      return [...prev, { ...slimStation(station), genreKey: genreKey ?? station.genreKey ?? null }];
     });
   }, [setFavorites]);
 
@@ -64,9 +60,10 @@ export function useFavorites() {
     setFavorites((prev) => prev.filter((f) => f.stationuuid !== stationuuid));
   }, [setFavorites]);
 
-  const isFavorite = useCallback((stationuuid) => {
-    return favorites.some((f) => f.stationuuid === stationuuid);
-  }, [favorites]);
+  const isFavorite = useCallback(
+    (stationuuid) => favorites.some((f) => f.stationuuid === stationuuid),
+    [favorites],
+  );
 
   return {
     favorites,

@@ -1,4 +1,4 @@
-import './SleepTimer.css';
+import Icon from './Icon.jsx';
 
 const PRESETS = [15, 30, 60];
 
@@ -8,28 +8,32 @@ function formatRemaining(seconds) {
   return `${mm}:${ss}`;
 }
 
-export default function SleepTimer({ active, remaining, onSet, onCancel }) {
-  if (active) {
-    return (
-      <div className="sleep-timer sleep-timer--active">
-        <span className={`sleep-countdown ${remaining <= 60 ? 'scanning' : ''}`}>
-          {'☾'} {formatRemaining(remaining)}
-        </span>
-        <button className="sleep-btn sleep-cancel" onClick={onCancel} title="Cancel sleep timer">
-          CANCEL
-        </button>
-      </div>
-    );
-  }
-
+/** Pick a time to stop; while it runs, the same spot shows the countdown. */
+export default function SleepTimer({ active, remaining, onStart, onCancel }) {
   return (
-    <div className="sleep-timer">
-      <span className="sleep-label">{'☾'} SLEEP</span>
-      {PRESETS.map((m) => (
-        <button key={m} className="sleep-btn" onClick={() => onSet(m)} title={`Stop in ${m} minutes`}>
-          {m}
-        </button>
-      ))}
+    <div className="ctl sleep" data-active={active} role="group" aria-label="Sleep timer">
+      <span className="ctl-icon" title="Sleep timer"><Icon name="moon" /></span>
+      <span className="sleep-opts">
+        {active ? (
+          <>
+            <span className="sleep-countdown" data-ending={remaining <= 60} role="timer">
+              {formatRemaining(remaining)}
+            </span>
+            <button onClick={onCancel} aria-label="Cancel sleep timer" title="Cancel sleep timer">✕</button>
+          </>
+        ) : (
+          PRESETS.map((minutes) => (
+            <button
+              key={minutes}
+              onClick={() => onStart(minutes)}
+              aria-label={`Stop playing in ${minutes} minutes`}
+              title={`Stop playing in ${minutes} minutes`}
+            >
+              {minutes}
+            </button>
+          ))
+        )}
+      </span>
     </div>
   );
 }

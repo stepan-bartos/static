@@ -1,25 +1,25 @@
-import './VolumeControl.css';
+import Icon from './Icon.jsx';
 
-export default function VolumeControl({ volume, muted, onVolumeChange, onToggleMute }) {
+export default function VolumeControl({ volume, muted, onChange, onToggleMute }) {
   return (
-    <div className="volume-control">
+    <div className="ctl volume">
       <button
-        className="vol-mute"
+        className="ctl-icon"
         onClick={onToggleMute}
-        title={muted ? 'Unmute (M)' : 'Mute (M)'}
         aria-label={muted ? 'Unmute' : 'Mute'}
+        title={muted ? 'Unmute (M)' : 'Mute (M)'}
       >
-        {muted ? 'MUTE' : 'VOL'}
+        <Icon name={muted ? 'muted' : 'volume'} />
       </button>
       <input
-        className="vol-slider"
+        className="vol"
         type="range"
         min="0"
         max="1"
         step="0.01"
         value={volume}
-        onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-        style={{ '--vol-pct': `${Math.round(volume * 100)}%` }}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        style={{ '--v': `${Math.round(volume * 100)}%` }}
         aria-label="Volume"
       />
     </div>
