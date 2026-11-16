@@ -11,6 +11,7 @@ export const GENRES = [
   { key: 'ambient', label: 'Ambient', tags: ['ambient', 'chillout'] },
   { key: 'techno', label: 'Techno', tags: ['techno', 'dub techno'] },
   { key: 'house', label: 'House', tags: ['house', 'deep house'] },
+  { key: 'dnb', label: 'Drum & Bass', tags: ['drum and bass', 'drum & bass', 'dnb', 'jungle'] },
   { key: 'hiphop', label: 'Hip Hop', tags: ['hip hop', 'rap', 'hip-hop'] },
   { key: 'soul', label: 'Soul & R&B', tags: ['soul', 'r&b'] },
   { key: 'funk', label: 'Funk', tags: ['funk', 'funky', 'disco'] },
