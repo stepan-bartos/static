@@ -34,14 +34,31 @@ Other commands:
 
 ## Deploying
 
-The site does **not** deploy on push. Build it, then publish `dist/` to Cloudflare Pages:
+The site deploys itself. Every push to `main` is built by Cloudflare and published
+to the `static-radio` Pages project, so **merging to `main` goes live** within a
+minute or so. Pushes to any other branch are published as a preview at
+`https://<branch>.static-radio.pages.dev` and leave the live site alone.
+
+The build shows up on GitHub as the "Workers Builds: static" check. It is
+configured in the Cloudflare dashboard, not in this repo: Workers & Pages →
+`static` → Settings → Builds.
+
+| Setting | Value |
+|---|---|
+| Build command | `npm run build` |
+| Deploy command (`main`) | `npx wrangler pages deploy dist --project-name=static-radio --branch=main` |
+| Version command (other branches) | `npx wrangler pages deploy dist --project-name=static-radio --branch=$WORKERS_CI_BRANCH` |
+
+The API token that build uses needs the Account → Cloudflare Pages → Edit permission.
+
+To publish by hand instead (for example if the build is down):
 
 ```bash
 npm run build
-npx wrangler pages deploy dist --project-name static-radio
+npx wrangler pages deploy dist --project-name static-radio --branch main
 ```
 
-The metadata worker deploys separately:
+The metadata worker is **not** part of the automatic deploy. Publish it separately:
 
 ```bash
 cd worker
