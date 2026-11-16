@@ -11,7 +11,7 @@ import LogPanel from './components/LogPanel.jsx';
 import ShortcutHelp from './components/ShortcutHelp.jsx';
 import audioPlayer from './services/audioPlayer.js';
 import { buildShareUrl } from './services/shareLink.js';
-import { findSong, MUSIC_SERVICES } from './services/musicServices.js';
+import { findSong, prepareSong, MUSIC_SERVICES } from './services/musicServices.js';
 import { useRadio } from './hooks/useRadio.js';
 import { useFavorites, MAX_FAVORITES } from './hooks/useFavorites.js';
 import { useHistoryLog } from './hooks/useHistoryLog.js';
@@ -61,6 +61,11 @@ export default function App() {
       ? `${nowPlaying || station.name} · Static`
       : 'Static - A radio, not a recommendation engine';
   }, [station, nowPlaying]);
+
+  // Look the current song up ahead of time so "Find song" opens instantly
+  useEffect(() => {
+    prepareSong(musicService, nowPlaying);
+  }, [musicService, nowPlaying]);
 
   const toggleFavorite = () => {
     if (!station) return;
@@ -225,6 +230,7 @@ export default function App() {
         musicService={musicService}
         onChooseService={chooseService}
         onFindSong={(title) => findSong(musicService, title)}
+        onPrepareSong={(title) => prepareSong(musicService, title)}
         onPlayStation={(entry) => radio.playStation(entry, entry.genreKey)}
         onClear={history.clear}
       />

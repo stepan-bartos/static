@@ -22,6 +22,7 @@ export default function LogPanel({
   musicService,
   onChooseService,
   onFindSong,
+  onPrepareSong,
   onPlayStation,
   onClear,
 }) {
@@ -82,7 +83,13 @@ export default function LogPanel({
                   <div className="log-title">{entry.title}</div>
                   <div className="log-sub">{entry.station} · {formatWhen(entry.at)}</div>
                 </div>
-                <button className="log-action" onClick={() => handleFind(entry.title)} aria-label={`Find “${entry.title}”`}>
+                <button
+                  className="log-action"
+                  onClick={() => handleFind(entry.title)}
+                  onPointerEnter={() => onPrepareSong?.(entry.title)}
+                  onFocus={() => onPrepareSong?.(entry.title)}
+                  aria-label={`Find “${entry.title}”`}
+                >
                   Find ↗
                 </button>
               </li>
